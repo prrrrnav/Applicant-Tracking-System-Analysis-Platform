@@ -2,7 +2,8 @@
   "name": "resume-club",
   "version": "1.0.0",
   "description": "Analyses resumes and generates a summary.",
-  "main": "server.js",
+  "type": "module",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
@@ -14,7 +15,8 @@
     "mammoth": "^1.9.0",
     "multer": "^1.4.5-lts.2",
     "openai": "^4.97.0",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "redis": "^5.10.0"
   },
   "engines": {
     "node": ">=16.x"

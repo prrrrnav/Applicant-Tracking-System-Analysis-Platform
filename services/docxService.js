@@ -1,6 +1,6 @@
-const { Document, Packer, Paragraph, TextRun } = require('docx');
+import { Document, Packer, Paragraph, TextRun }  from 'docx'
 
-exports.generateDocxBuffer = async (analysisText) => {
+const generateDocxBuffer = async (analysisText) => {
   const doc = new Document({
     sections: [
       {
@@ -15,3 +15,4 @@ exports.generateDocxBuffer = async (analysisText) => {
 
   return await Packer.toBuffer(doc);
 };
+export {generateDocxBuffer}

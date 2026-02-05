@@ -1,18 +1,50 @@
-const { OpenAI } = require('openai');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { OpenAI } from 'openai'
 
-exports.analyzeWithGPT = async (resumeText, jd) => {
-  const prompt = `Given the following resume and job description, please evaluate the ATS (Applicant Tracking System) score out of 100. The evaluation should be based on the following criteria:
-1. **Skills Match**: Assess how closely the skills in the resume align with those mentioned in the job description. Rate the skills match and suggest improvements for skills that are missing or not emphasized enough.
-2. **Experience**: Analyze the experience section and determine how well it matches the job requirements. Highlight any relevant experience and suggest additional experience or responsibilities that should be included.
-3. **Education**: Evaluate the educational background in relation to the job. If there are relevant certifications or courses not mentioned in the resume, suggest adding them.
-4. **Certifications and Achievements**: Look for certifications or achievements that add value to the resume in relation to the job description. Recommend any relevant certifications the candidate could pursue.
-5. **Formatting and Readability**: Evaluate the formatting and structure of the resume. Provide suggestions on how to make the resume more ATS-friendly, such as using appropriate headings, clear section titles, and consistent formatting.
-6. **Keywords**: Ensure that the resume uses relevant keywords from the job description. If any important keywords are missing, recommend including them.
+let openaiClient;
 
-### **ATS Score**: The score should be out of 100, based on how well the resume matches the job description in all areas.
+const getOpenAIClient = () => {
+  if (!openaiClient) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'OPENAI_API_KEY environment variable is missing or empty; set it in your .env file or environment before calling GPT services.'
+      );
+    }
+    openaiClient = new OpenAI({ apiKey });
+  }
+  return openaiClient;
+};
 
-### **Suggestions for Improvement**: Provide specific recommendations for improving the resume to make it more ATS-friendly. This could include adding missing skills, restructuring sections, or highlighting relevant experience.
+const analyzeWithGPT = async (resumeText, jd) => {
+  const prompt = `Analyze the resume against the job description.
+
+Return ONLY valid JSON in the following schema:
+response_format: { type: "json_object" }
+{
+  score: {
+    total: number,
+    skillsMatch: number,
+    experience: number,
+    education: number,
+    certifications: number,
+    formatting: number,
+    keywords: number
+  },
+  keywords: {
+    matched: string[],
+    missing: string[]
+  },
+  missingSkills: string[],
+  strengths: string[],
+  improvements: {
+    skills: string[],
+    experience: string[],
+    formatting: string[]
+  },
+  summary: string
+}
+
+Do not include markdown, explanations, or extra text.
 
 **Resume:**
 ${resumeText}
@@ -21,6 +53,8 @@ ${resumeText}
 ${jd}`;
 
   const start = Date.now();
+
+  const openai = getOpenAIClient();
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
@@ -38,7 +72,7 @@ ${jd}`;
   return response.choices[0].message.content;
 };
 
-exports.optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
+const optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
   const prompt = `
 Here is the candidate's resume:
 ---
@@ -69,6 +103,8 @@ Each field should be a string. Do NOT include any extra text or explanation. Do 
   `.trim();
 
   const start = Date.now();
+
+  const openai = getOpenAIClient();
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
@@ -116,6 +152,7 @@ Each field should be a string. Do NOT include any extra text or explanation. Do 
   }
 };
 
+export { optimizeWithGPT, analyzeWithGPT };
 
 // exports.optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
 //   const prompt = `

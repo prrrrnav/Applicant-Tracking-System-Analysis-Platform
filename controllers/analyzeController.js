@@ -1,10 +1,20 @@
-const fs = require('fs');
-const pdfParse = require('pdf-parse');
-const mammoth = require('mammoth');
-const { analyzeWithGPT,optimizeWithGPT } = require('../services/gptService');
-const { Document, Packer, Paragraph, TextRun, AlignmentType } = require('docx');
+import fs from "fs";
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 
-exports.analyzeResume = async (req, res) => {
+import mammoth from "mammoth";
+
+import { analyzeWithGPT, optimizeWithGPT } from "../services/gptService.js";
+
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  AlignmentType,
+} from "docx";
+
+
+export const analyzeResume = async (req, res) => {
   try {
     const file = req.file;
     const jobDescription = req.body.jd;
@@ -71,7 +81,7 @@ exports.analyzeResume = async (req, res) => {
 };
 
 
-exports.generateOptimizedResume = async (req, res) => {
+export const generateOptimizedResume = async (req, res) => {
   try {
     const file = req.file;
     const jobDescription = req.body.jd;

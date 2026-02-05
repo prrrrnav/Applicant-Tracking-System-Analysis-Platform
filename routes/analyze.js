@@ -1,13 +1,19 @@
-const express = require('express');
+import express from "express";
+
+import { upload } from "../middleware/upload.js";
+import {
+  analyzeResume,
+  generateOptimizedResume,
+} from "../controllers/analyzeController.js";
+
 const router = express.Router();
-const { upload } = require('../middleware/upload');
-const { analyzeResume, generateOptimizedResume } = require('../controllers/analyzeController');
-const verifySource = require('../middleware/verifySource');
+
+import verifySource from "../middleware/verifySource.js";
 
 // Main route for resume analysis
-router.post('/', verifySource, upload.single('resume'),analyzeResume);
+router.post('/',verifySource, upload.single('resume'),analyzeResume);
 
 // Route for generating optimized resume
 router.post('/generate-optimized-resume', verifySource, upload.single('resume'),generateOptimizedResume)
 
-module.exports = router;
+export default router;

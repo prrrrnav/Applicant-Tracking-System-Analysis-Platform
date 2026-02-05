@@ -12,7 +12,7 @@ const ResumeAnalyzer = () => {
         setError(null);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {                                                                                                                                                                                                                                                                                                 
         e.preventDefault();
         if (!file) {
             setError('Please select a file');
