@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  server:
+    build: .
+    container_name: resume-ats-server
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  redis:
+    image: redis:latest
+    container_name: resume-ats-redis
+    restart: always
+   
