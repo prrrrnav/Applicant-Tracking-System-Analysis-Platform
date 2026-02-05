@@ -69,6 +69,8 @@ Create a .env file:
 
 OPENAI_API_KEY=your_api_key_here
 PORT=5000
+MY_SECRET_KEY=test-key
+pass "test-key" as header authorization
 
 # Redis (works locally & in Docker)
 REDIS_HOST=redis
