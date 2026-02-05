@@ -1,15 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { redisClient } from "./config/redis.js";
+import redis from "./config/redis.js";
 dotenv.config();
 
 import analyzeRoutes from "./routes/analyze.js";
 
 import testRoutes from "./routes/health.js";
 
-await redisClient.set("test", "hello");
-console.log(await redisClient.get("test"));
 
 
 

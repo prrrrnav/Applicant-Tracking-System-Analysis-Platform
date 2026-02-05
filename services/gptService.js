@@ -1,4 +1,6 @@
-import { OpenAI } from 'openai'
+import { OpenAI } from 'openai';
+import redis from "../config/redis.js";
+import crypto from "crypto";
 
 let openaiClient;
 
@@ -6,73 +8,133 @@ const getOpenAIClient = () => {
   if (!openaiClient) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error(
-        'OPENAI_API_KEY environment variable is missing or empty; set it in your .env file or environment before calling GPT services.'
-      );
+      throw new Error("Missing OPENAI_API_KEY");
     }
     openaiClient = new OpenAI({ apiKey });
   }
   return openaiClient;
 };
 
+/* ============================================================
+   ANALYZE WITH GPT (WITH REDIS CACHING)
+============================================================ */
 const analyzeWithGPT = async (resumeText, jd) => {
+
+  // Create cache key
+  const hashInput = resumeText + jd;
+  const cacheKey =
+    "analysis:" + crypto.createHash("sha256").update(hashInput).digest("hex");
+
+  // 1️⃣ Check cache
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    console.log("⚡ Returning cached ANALYSIS");
+    return JSON.parse(cached);
+  }
+
+  console.log("⏳ Cache miss → Calling GPT (analysis)...");
+
   const prompt = `Analyze the resume against the job description.
 
-Return ONLY valid JSON in the following schema:
-response_format: { type: "json_object" }
+Return ONLY valid JSON:
 {
-  score: {
-    total: number,
-    skillsMatch: number,
-    experience: number,
-    education: number,
-    certifications: number,
-    formatting: number,
-    keywords: number
+  "score": {
+    "total": number,
+    "skillsMatch": number,
+    "experience": number,
+    "education": number,
+    "certifications": number,
+    "formatting": number,
+    "keywords": number
   },
-  keywords: {
-    matched: string[],
-    missing: string[]
+  "keywords": {
+    "matched": string[],
+    "missing": string[]
   },
-  missingSkills: string[],
-  strengths: string[],
-  improvements: {
-    skills: string[],
-    experience: string[],
-    formatting: string[]
+  "missingSkills": string[],
+  "strengths": string[],
+  "improvements": {
+    "skills": string[],
+    "experience": string[],
+    "formatting": string[]
   },
-  summary: string
+  "summary": string
 }
 
-Do not include markdown, explanations, or extra text.
-
-**Resume:**
+Resume:
 ${resumeText}
 
-**Job Description:**
-${jd}`;
+Job Description:
+${jd}
+`;
 
   const start = Date.now();
-
   const openai = getOpenAIClient();
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: "gpt-4o",
     messages: [
-      { role: 'system', content: 'You are an ATS resume evaluator.' },
-      { role: 'user', content: prompt },
+      { role: "system", content: "You are an ATS resume evaluator." },
+      { role: "user", content: prompt },
     ],
     max_tokens: 700,
   });
 
-  const end = Date.now();
-  const durationInSeconds = (end - start) / 1000;  // Duration in seconds
-  console.log(`Response time: ${durationInSeconds} seconds`);
+  console.log(`Response time: ${(Date.now() - start) / 1000}s`);
 
-  return response.choices[0].message.content;
+  // Extract JSON string
+  let raw = response.choices[0].message.content.trim();
+
+  if (raw.startsWith("```")) {
+    raw = raw.replace(/```(?:json)?/g, "").trim();
+  }
+
+  const firstBrace = raw.indexOf("{");
+  const lastBrace = raw.lastIndexOf("}");
+
+  if (firstBrace === -1 || lastBrace === -1) {
+    throw new Error("Invalid JSON returned from GPT");
+  }
+
+  const jsonString = raw.slice(firstBrace, lastBrace + 1);
+
+  // 2️⃣ Parse JSON
+  let result;
+  try {
+    result = JSON.parse(jsonString);
+  } catch (err) {
+    console.error("GPT JSON parse error:", err);
+    throw new Error("GPT returned invalid JSON");
+  }
+
+  // 3️⃣ Save to Redis
+  await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);
+
+  return result;
 };
 
-const optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
+/* ============================================================
+   OPTIMIZE RESUME WITH GPT (WITH REDIS CACHING)
+============================================================ */
+const optimizeWithGPT = async (
+  resumeText,
+  jd,
+  goalScore = 95,
+  tone = "professional and concise"
+) => {
+  const hashInput = resumeText + jd + goalScore + tone;
+  const cacheKey =
+    "optimized:" + crypto.createHash("sha256").update(hashInput).digest("hex");
+
+  // 1️⃣ Check cache
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    console.log("⚡ Returning cached OPTIMIZED RESUME");
+    return JSON.parse(cached);
+  }
+
+  console.log("⏳ Cache miss → Calling GPT (optimize)...");
+
   const prompt = `
 Here is the candidate's resume:
 ---
@@ -82,12 +144,8 @@ Here is the job description:
 ---
 ${jd}
 
-You are an expert ATS resume optimizer.
-
-Rewrite and optimize the resume to match the job description using strong action verbs, relevant keywords, and a professional tone and use keywords that are included in job description. The resume should be tailored to score at least ${goalScore}/100 in an ATS scan.
-
-Return the result strictly as a JSON object with the following structure:
-
+Optimize this resume using ATS standards.
+Return ONLY valid JSON:
 {
   "name": "",
   "contact_information": "",
@@ -98,163 +156,54 @@ Return the result strictly as a JSON object with the following structure:
   "education": "",
   "awards_and_achievements": ""
 }
-
-Each field should be a string. Do NOT include any extra text or explanation. Do NOT wrap in code block. Only return valid JSON.
   `.trim();
 
+  const openai = getOpenAIClient();
   const start = Date.now();
 
-  const openai = getOpenAIClient();
-
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: "gpt-4o",
     messages: [
       {
-        role: 'system',
-        content: `You are an ATS resume optimizer. You receive a resume and a job description and must return an optimized resume in JSON format using the given fields. Respond only with valid JSON. Do NOT include triple backticks.`
+        role: "system",
+        content:
+          "You are an ATS resume optimizer. Return only valid JSON with no backticks.",
       },
-      {
-        role: 'user',
-        content: prompt
-      }
+      { role: "user", content: prompt },
     ],
     max_tokens: 1400,
-    temperature: 0.3
+    temperature: 0.3,
   });
 
-  const end = Date.now();
-  const durationInSeconds = (end - start) / 1000;
-  console.log(`Response time: ${durationInSeconds} seconds`);
+  console.log(`Response time: ${(Date.now() - start) / 1000}s`);
 
   let rawContent = response.choices[0].message.content.trim();
-  console.log("Raw GPT Response:", rawContent);
 
-  // Remove any wrapping backticks (like ```json or ```), if present
   if (rawContent.startsWith("```")) {
     rawContent = rawContent.replace(/```(?:json)?/g, "").trim();
   }
 
-  // Extract only the JSON part if needed
   const firstBrace = rawContent.indexOf("{");
   const lastBrace = rawContent.lastIndexOf("}");
 
   if (firstBrace === -1 || lastBrace === -1) {
-    throw new Error("Could not find valid JSON in GPT response.");
+    throw new Error("Could not find JSON in GPT response");
   }
 
   const jsonString = rawContent.slice(firstBrace, lastBrace + 1);
 
+  let result;
   try {
-    return JSON.parse(jsonString);
+    result = JSON.parse(jsonString);
   } catch (err) {
-    console.error("Failed to parse GPT response:", err.message);
+    console.error("Parsing error:", err);
     throw new Error("Invalid JSON returned from GPT.");
   }
+
+  // Save to Redis
+  await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);
+
+  return result;
 };
 
 export { optimizeWithGPT, analyzeWithGPT };
-
-// exports.optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
-//   const prompt = `
-// Here is the candidate's resume:
-// ---
-// ${resumeText}
-
-// Here is the job description:
-// ---
-// ${jd}
-
-// You are an expert ATS resume optimizer.
-
-// Rewrite and optimize the resume to match the job description using strong action verbs, relevant keywords, and a professional tone and use keywords that are included in job description. The resume should be tailored to score at least ${goalScore}/100 in an ATS scan.
-
-// Return the result strictly as a JSON object with the following structure:
-
-// {
-//   "name": "",
-//   "contact_information": "",
-//   "technical_skills": "",
-//   "professional_overview": "",
-//   "professional_experience": "",
-//   "projects": "",
-//   "education": "",
-//   "awards_and_achievements": ""
-// }
-
-// Each field should be a string. Do NOT include any extra text or explanation. Only return valid JSON.
-//   `.trim();
-
-//   const start = Date.now();
-
-//   const response = await openai.chat.completions.create({
-//     model: 'gpt-4o',
-//     messages: [
-//       {
-//         role: 'system',
-//         content: `You are an ATS resume optimizer. You receive a resume and a job description and must return an optimized resume in JSON format using the given fields. Respond only with valid JSON.`
-//       },
-//       {
-//         role: 'user',
-//         content: prompt
-//       }
-//     ],
-//     max_tokens: 1400,
-//     temperature: 0.3
-//   });
-
-//   const end = Date.now();
-//   const durationInSeconds = (end - start) / 1000;
-//   console.log(`Response time: ${durationInSeconds} seconds`);
-//   console.log(response.choices[0].message.content);
-
-//   return JSON.parse(response.choices[0].message.content); // Automatically converts the string into a usable JSON object
-// };
-
-// exports.optimizeWithGPT = async (resumeText, jd, goalScore = 95, tone = 'professional and concise') => {
-//   const prompt = `
-// Here is the candidate's resume:
-// ---
-// ${resumeText}
-
-// Here is the job description:
-// ---
-// ${jd}
-
-// Your task is to rewrite and optimize this resume to match the job description above. Ensure the following:
-// - Match the tone: ${tone}
-// - Use strong action verbs and achievement-oriented language.
-// - Include relevant keywords and skills from the job description.
-// - Format the resume using ATS-friendly structure: Summary, Skills, Experience, Projects (optional), Education.
-// - Avoid fancy symbols, tables, and columns. Use plain text formatting.
-// - The final resume should be clean, tailored, and able to score at least ${goalScore}/100 in an ATS scan.
-
-// Return ONLY the final optimized resume as plain text. Do NOT include extra notes, comments, or headings.
-// `.trim();
-
-//   const start = Date.now();
-
-//   const response = await openai.chat.completions.create({
-//     model: 'gpt-4o',
-//     messages: [
-//       {
-//         role: 'system',
-//         content: `
-// You are an expert ATS resume optimizer. You receive a resume and a job description. Your job is to optimize the resume using the job's language, skills, and structure to maximize ATS score (at least ${goalScore}/100). Always write in a ${tone} tone. Return only the improved resume in plain text.
-//         `.trim()
-//       },
-//       {
-//         role: 'user',
-//         content: prompt
-//       }
-//     ],
-//     max_tokens: 1200,
-//     temperature: 0.7
-//   });
-
-//   const end = Date.now();
-//   const durationInSeconds = (end - start) / 1000;
-//   console.log(`Response time: ${durationInSeconds} seconds`);
-//   console.log(response.choices[0].message.content);
-
-//   return response.choices[0].message.content;
-// };
