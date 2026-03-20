@@ -3,6 +3,7 @@ version: "3.9"
 services:
   server:
     build: .
+    image: prrrranv/resume-ats-server:latest
     container_name: resume-ats-server
     restart: always
     ports:
@@ -22,6 +23,7 @@ services:
 
   frontend:
     build: ./frontend
+    image: prrrranv/resume-ats-frontend:latest
     container_name: resume-ats-frontend
     restart: always
     ports:

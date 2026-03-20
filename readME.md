@@ -1,39 +1,55 @@
-# Resume Analyzer
+# 📄 Resume ATS Analysis Platform (Resume Club)
 
-A web application that analyzes resumes, extracts key information, and provides insights to help job seekers improve their CVs.
+![Docker Pulls](https://img.shields.io/badge/docker%20hub-ready-blue?style=for-the-badge&logo=docker)
+![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
+![Node.js](https://img.shields.io/badge/Node.js-Express-success?style=for-the-badge&logo=node.js)
+![Redis](https://img.shields.io/badge/Redis-Caching-red?style=for-the-badge&logo=redis)
 
-## Features
-- Upload and parse resumes in PDF or DOCX format
-- Extract personal details, work experience, education, and skills
-- Generate a summary report with suggestions for improvement
-- Compare multiple resumes side‑by‑side
+An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume analysis tool. This application allows users to upload their resumes (PDF or DOCX) to receive AI-powered summaries, formatting feedback, and actionable insights to improve their job application success rate.
 
-## Installation
+## ✨ Key Features
+
+* **Intelligent Parsing:** Extracts text seamlessly from both PDF and DOCX files using `pdf-parse` and `mammoth`.
+* **AI-Powered Analysis:** Leverages the OpenAI API to evaluate resume content, generating summaries and ATS-compatibility scores.
+* **Interactive Dashboard:** Beautiful, animated frontend built with Framer Motion and Recharts for visualizing resume metrics.
+* **High Performance:** Utilizes Redis for caching analysis results, significantly reducing API latency and OpenAI token usage.
+* **Export Capabilities:** Generate and download optimized resume documents directly from the browser.
+
+## 🛠️ Tech Stack
+
+**Frontend (Client)**
+* React 19 & Vite
+* TailwindCSS (Styling)
+* Framer Motion (Animations)
+* Recharts (Data Visualization)
+* React Dropzone (Drag-and-drop uploads)
+
+**Backend (Server)**
+* Node.js & Express
+* OpenAI API
+* Redis / ioredis (Caching)
+* Multer (File Handling)
+
+**Infrastructure & Deployment**
+* Docker & Docker Compose
+
+---
+
+## 🚦 Prerequisites
+
+Before you begin, ensure you have the following installed:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* An active [OpenAI API Key](https://platform.openai.com/)
+
+---
+
+## 🐳 Running with Docker (Recommended)
+
+This project is fully containerized. You can pull the pre-built images directly from Docker Hub or build it locally using Docker Compose.
+
+### 1. Environment Setup (CRITICAL)
+Your OpenAI API key must be provided securely. **Never commit this file to version control.**
+
+Create a `.env` file in the root directory of the project:
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/resume-analyzer.git
-
-# Navigate to the project directory
-cd resume-analyzer
-
-# Install dependencies (frontend)
-cd frontend && npm install && cd ..
-
-# Install dependencies (backend, if any)
-# (Add backend installation steps here)
-```
-
-## Usage
-1. Start the development server:
-```bash
-cd frontend
-npm run dev
-```
-2. Open your browser and navigate to `http://localhost:3000`.
-3. Upload a resume file and view the extracted information.
-
-## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request.
-
-## License
-This project is licensed under the MIT License.
+touch .env
