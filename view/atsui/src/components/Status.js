@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Status.css';
 
-const BASE_URL = 'https://resume-ats-analyzer.p.rapidapi.com';
+// const BASE_URL = 'https://resume-ats-analyzer.p.rapidapi.com';
+const BASE_URL = import.meta.env.VITE_API_URL;
 const MAX_RETRIES = 2;
-const INITIAL_RETRY_DELAY = 50000000000; // 5 seconds
-const STATUS_CHECK_INTERVAL = 600000000000; // 1 minute
+const INITIAL_RETRY_DELAY = 5000; // 5 seconds
+const STATUS_CHECK_INTERVAL = 60000; // 1 minute
 
 const Status = () => {
     const [status, setStatus] = useState({ ping: null, status: null });
@@ -16,7 +17,7 @@ const Status = () => {
     const getAuthHeaders = () => {
         return {
             'Authorization': 'Bearer test-key',
-            'X-RapidAPI-Proxy-Secret': 'test-key',
+            // 'X-RapidAPI-Proxy-Secret': 'test-key',
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         };

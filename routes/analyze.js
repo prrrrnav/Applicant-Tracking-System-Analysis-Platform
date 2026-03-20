@@ -8,12 +8,17 @@ import {
 
 const router = express.Router();
 
-import verifySource from "../middleware/verifySource.js";
+// import verifySource from "../middleware/verifySource.js";
 
 // Main route for resume analysis
-router.post('/',verifySource, upload.single('resume'),analyzeResume);
+// router.post('/',verifySource, upload.single('resume'),analyzeResume);
+router.post('/', upload.single('resume'),analyzeResume);
 
 // Route for generating optimized resume
-router.post('/generate-optimized-resume', verifySource, upload.single('resume'),generateOptimizedResume)
+router.post('/generate-optimized-resume', upload.single('resume'),generateOptimizedResume)
+// router.post('/generate-optimized-resume',verifySource, upload.single('resume'),generateOptimizedResume)
+
+
+
 
 export default router;

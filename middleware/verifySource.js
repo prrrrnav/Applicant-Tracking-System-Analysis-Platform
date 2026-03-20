@@ -12,14 +12,14 @@ const verifySource= (req, res, next)=> {
 
 
   // for production auth 
-  // if (mySecret === `Bearer ${MY_SECRET}`) {
-  //   return next();
-  // }
-
-  // testing auth
-  if (mySecret === `${MY_SECRET}`) {
+  if (mySecret === `Bearer ${MY_SECRET}`) {
     return next();
   }
+
+  // testing auth
+  // if (mySecret === `${MY_SECRET}`) {
+  //   return next();
+  // }
 
   return res.status(403).json({ message: 'Access Denied: Unauthorized source' });
 };
