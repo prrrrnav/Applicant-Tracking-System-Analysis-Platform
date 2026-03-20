@@ -7,6 +7,17 @@
 
 An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume analysis tool. This application allows users to upload their resumes (PDF or DOCX) to receive AI-powered summaries, formatting feedback, and actionable insights to improve their job application success rate.
 
+
+## 🚦 Screenshots
+
+![alt Landing Page](./POW/image.png)
+
+![alt Dashboard Page](./POW/image2.png)
+![alt Dashboard Page](./POW/image3.png)
+![alt Dashboard Page](./POW/image4.png)
+![alt Dashboard Page](./POW/image5.png)
+
+
 ## ✨ Key Features
 
 * **Intelligent Parsing:** Extracts text seamlessly from both PDF and DOCX files using `pdf-parse` and `mammoth`.
