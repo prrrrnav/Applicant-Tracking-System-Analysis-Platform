@@ -1,9 +1,9 @@
 # 📄 Resume ATS Analysis Platform (Resume Club)
 
-![Docker Pulls](https://img.shields.io/badge/docker%20hub-ready-blue?style=for-the-badge&logo=docker)
-![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-success?style=for-the-badge&logo=node.js)
-![Redis](https://img.shields.io/badge/Redis-Caching-red?style=for-the-badge&logo=redis)
+![Docker Image address](https://hub.docker.com/u/prrrranv)
+![React](https://react.dev)
+![Node.js](https://nodejs.org/en)
+![Redis](https://redis.io)
 
 An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume analysis tool. This application allows users to upload their resumes (PDF or DOCX) to receive AI-powered summaries, formatting feedback, and actionable insights to improve their job application success rate.
 
