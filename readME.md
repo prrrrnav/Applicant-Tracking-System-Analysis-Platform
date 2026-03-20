@@ -1,9 +1,9 @@
 # 📄 Resume ATS Analysis Platform (Resume Club)
 
-![Docker Image address](https://hub.docker.com/u/prrrranv)
-![React](https://react.dev)
-![Node.js](https://nodejs.org/en)
-![Redis](https://redis.io)
+![Docker Pulls](https://img.shields.io/badge/docker%20hub-ready-blue?style=for-the-badge&logo=docker)
+![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
+![Node.js](https://img.shields.io/badge/Node.js-Express-success?style=for-the-badge&logo=node.js)
+![Redis](https://img.shields.io/badge/Redis-Caching-red?style=for-the-badge&logo=redis)
 
 An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume analysis tool. This application allows users to upload their resumes (PDF or DOCX) to receive AI-powered summaries, formatting feedback, and actionable insights to improve their job application success rate.
 
@@ -30,7 +30,7 @@ An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume 
 * Redis / ioredis (Caching)
 * Multer (File Handling)
 
-**Infrastructure & Deployment**
+**Infrastructure**
 * Docker & Docker Compose
 
 ---
@@ -38,14 +38,17 @@ An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume 
 ## 🚦 Prerequisites
 
 Before you begin, ensure you have the following installed:
+
+
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 * An active [OpenAI API Key](https://platform.openai.com/)
+* [Docker Image address](https://hub.docker.com/u/prrrranv)
 
 ---
 
 ## 🐳 Running with Docker (Recommended)
 
-This project is fully containerized. You can pull the pre-built images directly from Docker Hub or build it locally using Docker Compose.
+This project is fully containerized. You can pull the pre-built image directly from Docker Hub or build it locally using Docker Compose.
 
 ### 1. Environment Setup (CRITICAL)
 Your OpenAI API key must be provided securely. **Never commit this file to version control.**
