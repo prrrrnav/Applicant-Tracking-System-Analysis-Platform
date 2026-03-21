@@ -101,7 +101,7 @@ export default function UploadBox({ onAnalyze, loading }) {
             />
           </div>
 
-          <div>
+          {/* <div>
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/30">Authorization <span className="normal-case font-normal text-white/20">(optional)</span></p>
             <input
               className="w-full rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-white/20 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/10"
@@ -113,7 +113,7 @@ export default function UploadBox({ onAnalyze, loading }) {
             <p className="mt-1.5 text-xs text-white/20">
               Stored locally. Sent as the <span className="font-mono">Authorization</span> header.
             </p>
-          </div>
+          </div> */}
 
           <button
             className={[
