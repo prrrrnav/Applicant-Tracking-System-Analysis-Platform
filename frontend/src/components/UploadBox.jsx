@@ -3,7 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
 
 export default function UploadBox({ onAnalyze, loading }) {
-  const [jd, setJd] = useState("");
+  const [jd, setJd] = useState("Software Developer");
   const [auth, setAuth] = useState(() => localStorage.getItem("ats_auth") || "");
   const [file, setFile] = useState(null);
 
@@ -91,7 +91,7 @@ export default function UploadBox({ onAnalyze, loading }) {
         {/* Right — JD + auth + submit */}
         <div className="flex flex-1 flex-col gap-5 p-6">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/30">Job Description <span className="normal-case font-normal text-white/20">(optional)</span></p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/30">Job Description <span className="normal-case font-normal text-white/20">(Mandatory)</span></p>
             <textarea
               className="min-h-[140px] w-full resize-y rounded-xl border border-white/8 bg-white/[0.03] p-4 text-sm text-white placeholder-white/20 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/10"
               placeholder="Paste the job description here for keyword matching..."
