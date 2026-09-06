@@ -21,9 +21,9 @@ An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume 
 ## ✨ Key Features
 
 * **Intelligent Parsing:** Extracts text seamlessly from both PDF and DOCX files using `pdf-parse` and `mammoth`.
-* **AI-Powered Analysis:** Leverages the OpenAI API to evaluate resume content, generating summaries and ATS-compatibility scores.
+* **AI-Powered Analysis:** Leverages the Groq API to evaluate resume content, generating summaries and ATS-compatibility scores.
 * **Interactive Dashboard:** Beautiful, animated frontend built with Framer Motion and Recharts for visualizing resume metrics.
-* **High Performance:** Utilizes Redis for caching analysis results, significantly reducing API latency and OpenAI token usage.
+* **High Performance:** Utilizes Redis for caching analysis results, significantly reducing API latency and Groq token usage.
 * **Export Capabilities:** Generate and download optimized resume documents directly from the browser.
 
 ## 🛠️ Tech Stack
@@ -37,7 +37,7 @@ An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume 
 
 **Backend (Server)**
 * Node.js & Express
-* OpenAI API
+* Groq API
 * Redis / ioredis (Caching)
 * Multer (File Handling)
 
@@ -52,7 +52,7 @@ Before you begin, ensure you have the following installed:
 
 
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-* An active [OpenAI API Key](https://platform.openai.com/)
+* An active [Groq API Key](https://console.groq.com/keys)
 * [Docker Image address](https://hub.docker.com/u/prrrranv)
 
 ---
@@ -62,7 +62,7 @@ Before you begin, ensure you have the following installed:
 This project is fully containerized. You can pull the pre-built image directly from Docker Hub or build it locally using Docker Compose.
 
 ### 1. Environment Setup (CRITICAL)
-Your OpenAI API key must be provided securely. **Never commit this file to version control.**
+Your Groq API key must be provided securely as `GROQ_API_KEY`. **Never commit this file to version control.**
 
 Create a `.env` file in the root directory of the project:
 ```bash

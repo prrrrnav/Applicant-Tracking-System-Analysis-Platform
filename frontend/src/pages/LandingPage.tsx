@@ -77,7 +77,7 @@ export function LandingPage() {
           <div className="flex items-center gap-4">
             
             <Link
-              to="/analyze"
+              to="/auth?mode=signup"
               className="flex h-9 items-center rounded-lg bg-indigo-500 px-5 text-sm font-semibold text-white transition-all hover:bg-indigo-400"
             >
               Get Started
@@ -120,13 +120,13 @@ export function LandingPage() {
 
           <motion.div {...fadeUp(0.3)} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Link
-              to="/analyze"
+              to="/auth?mode=signup"
               className="rounded-xl bg-indigo-500 px-8 py-4 text-base font-bold text-white transition-all hover:bg-indigo-400 hover:scale-[1.02] active:scale-[0.98]"
             >
               Analyze My Resume
             </Link>
             <Link
-              to="/analyze"
+              to="/auth?mode=signup"
               className="rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-bold text-white/80 transition-all hover:bg-white/10"
             >
               See How It Works

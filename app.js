@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import redis from "./config/redis.js";
 dotenv.config();
+import redis from "./config/redis.js";
 
 import analyzeRoutes from "./routes/analyze.js";
 

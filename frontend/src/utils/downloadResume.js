@@ -17,7 +17,7 @@ function heading(text) {
       new TextRun({
         text: text.toUpperCase(),
         bold: true,
-        size: 22,
+        size: 18,
         color: "4F46E5",
         font: "Calibri",
       }),
@@ -25,15 +25,17 @@ function heading(text) {
     border: {
       bottom: { style: BorderStyle.SINGLE, size: 6, color: "C7D2FE" },
     },
-    spacing: { before: 280, after: 120 },
+    spacing: { before: 120, after: 45 },
+    keepNext: true,
   });
 }
 
 function bullet(text) {
   return new Paragraph({
-    children: [new TextRun({ text, size: 20, font: "Calibri" })],
+    children: [new TextRun({ text, size: 17, font: "Calibri" })],
     bullet: { level: 0 },
-    spacing: { after: 60 },
+    alignment: AlignmentType.JUSTIFIED,
+    spacing: { after: 15, line: 190 },
   });
 }
 
@@ -42,7 +44,7 @@ function line(text, options = {}) {
     children: [
       new TextRun({
         text,
-        size: options.size ?? 20,
+        size: options.size ?? 17,
         bold: options.bold ?? false,
         color: options.color ?? "1E293B",
         font: "Calibri",
@@ -50,12 +52,9 @@ function line(text, options = {}) {
       }),
     ],
     alignment: options.align ?? AlignmentType.LEFT,
-    spacing: { after: options.spaceAfter ?? 60 },
+    spacing: { after: options.spaceAfter ?? 30, line: 190 },
+    keepNext: options.keepNext ?? false,
   });
-}
-
-function emptyLine() {
-  return new Paragraph({ children: [new TextRun("")], spacing: { after: 60 } });
 }
 
 // ── main export ───────────────────────────────────────────────────────────────
@@ -72,13 +71,13 @@ export async function downloadOptimizedResume(r) {
         new TextRun({
           text: (r.name ?? "Resume").toUpperCase(),
           bold: true,
-          size: 48,
+          size: 34,
           color: "1E293B",
           font: "Calibri Light",
         }),
       ],
-      alignment: AlignmentType.LEFT,
-      spacing: { after: 80 },
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 25 },
     })
   );
 
@@ -89,13 +88,14 @@ export async function downloadOptimizedResume(r) {
         children: [
           new TextRun({
             text: r.title,
-            size: 22,
+            size: 18,
             color: "4F46E5",
             bold: true,
             font: "Calibri",
           }),
         ],
-        spacing: { after: 100 },
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 30 },
       })
     );
   }
@@ -113,22 +113,21 @@ export async function downloadOptimizedResume(r) {
     children.push(
       new Paragraph({
         children: parts.flatMap((p, i) => [
-          new TextRun({ text: p, size: 18, color: "475569", font: "Calibri" }),
+          new TextRun({ text: p, size: 16, color: "475569", font: "Calibri" }),
           ...(i < parts.length - 1
-            ? [new TextRun({ text: "  ·  ", size: 18, color: "94A3B8", font: "Calibri" })]
+            ? [new TextRun({ text: "  ·  ", size: 16, color: "94A3B8", font: "Calibri" })]
             : []),
         ]),
-        spacing: { after: 60 },
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 30 },
       })
     );
   }
 
-  children.push(emptyLine());
-
   // ── Summary ──
   if (r.summary) {
     children.push(heading("Professional Summary"));
-    children.push(line(r.summary, { spaceAfter: 80 }));
+    children.push(line(r.summary, { align: AlignmentType.JUSTIFIED, spaceAfter: 40 }));
   }
 
   // ── Skills ──
@@ -140,10 +139,10 @@ export async function downloadOptimizedResume(r) {
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: `${label}: `, bold: true, size: 20, font: "Calibri", color: "1E293B" }),
-            new TextRun({ text: items, size: 20, font: "Calibri", color: "374151" }),
+            new TextRun({ text: `${label}: `, bold: true, size: 17, font: "Calibri", color: "1E293B" }),
+            new TextRun({ text: items, size: 17, font: "Calibri", color: "374151" }),
           ],
-          spacing: { after: 60 },
+          spacing: { after: 20, line: 190 },
         })
       );
     }
@@ -156,17 +155,17 @@ export async function downloadOptimizedResume(r) {
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: exp.role ?? "", bold: true, size: 22, font: "Calibri", color: "1E293B" }),
-            new TextRun({ text: exp.company ? `  ·  ${exp.company}` : "", size: 20, font: "Calibri", color: "4F46E5" }),
+            new TextRun({ text: exp.role ?? "", bold: true, size: 18, font: "Calibri", color: "1E293B" }),
+            new TextRun({ text: exp.company ? `  ·  ${exp.company}` : "", size: 17, font: "Calibri", color: "4F46E5" }),
             ...(exp.period
-              ? [new TextRun({ text: `  —  ${exp.period}`, size: 18, font: "Calibri", color: "94A3B8" })]
+              ? [new TextRun({ text: `  —  ${exp.period}`, size: 16, font: "Calibri", color: "94A3B8" })]
               : []),
           ],
-          spacing: { before: 120, after: 80 },
+          spacing: { before: 45, after: 25, line: 190 },
+          keepNext: true,
         })
       );
       for (const b of exp.bullets ?? []) children.push(bullet(b));
-      children.push(emptyLine());
     }
   }
 
@@ -178,17 +177,17 @@ export async function downloadOptimizedResume(r) {
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: proj.name ?? "", bold: true, size: 22, font: "Calibri", color: "1E293B" }),
-            ...(stack ? [new TextRun({ text: `  ·  ${stack}`, size: 18, font: "Calibri", color: "4F46E5" })] : []),
+            new TextRun({ text: proj.name ?? "", bold: true, size: 18, font: "Calibri", color: "1E293B" }),
+            ...(stack ? [new TextRun({ text: `  ·  ${stack}`, size: 16, font: "Calibri", color: "4F46E5" })] : []),
             ...(proj.period
-              ? [new TextRun({ text: `  —  ${proj.period}`, size: 18, font: "Calibri", color: "94A3B8" })]
+              ? [new TextRun({ text: `  —  ${proj.period}`, size: 16, font: "Calibri", color: "94A3B8" })]
               : []),
           ],
-          spacing: { before: 120, after: 80 },
+          spacing: { before: 45, after: 25, line: 190 },
+          keepNext: true,
         })
       );
       for (const b of proj.bullets ?? []) children.push(bullet(b));
-      children.push(emptyLine());
     }
   }
 
@@ -199,19 +198,20 @@ export async function downloadOptimizedResume(r) {
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: edu.degree ?? "", bold: true, size: 22, font: "Calibri", color: "1E293B" }),
+            new TextRun({ text: edu.degree ?? "", bold: true, size: 18, font: "Calibri", color: "1E293B" }),
           ],
-          spacing: { before: 100, after: 40 },
+          spacing: { before: 35, after: 15, line: 190 },
+          keepNext: true,
         })
       );
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: edu.institution ?? "", size: 20, font: "Calibri", color: "374151" }),
-            ...(edu.location ? [new TextRun({ text: `  ·  ${edu.location}`, size: 20, font: "Calibri", color: "94A3B8" })] : []),
-            ...(edu.period ? [new TextRun({ text: `  —  ${edu.period}`, size: 18, font: "Calibri", color: "94A3B8" })] : []),
+            new TextRun({ text: edu.institution ?? "", size: 17, font: "Calibri", color: "374151" }),
+            ...(edu.location ? [new TextRun({ text: `  ·  ${edu.location}`, size: 17, font: "Calibri", color: "94A3B8" })] : []),
+            ...(edu.period ? [new TextRun({ text: `  —  ${edu.period}`, size: 16, font: "Calibri", color: "94A3B8" })] : []),
           ],
-          spacing: { after: 80 },
+          spacing: { after: 25, line: 190 },
         })
       );
     }
@@ -220,13 +220,17 @@ export async function downloadOptimizedResume(r) {
   // ── Certifications ──
   if (r.certifications?.length > 0) {
     children.push(heading("Certifications"));
-    for (const c of r.certifications) children.push(line(`• ${c}`, { spaceAfter: 60 }));
+    for (const c of r.certifications) {
+      children.push(line(`• ${c}`, { align: AlignmentType.JUSTIFIED, spaceAfter: 20 }));
+    }
   }
 
   // ── Achievements ──
   if (r.achievements?.length > 0) {
     children.push(heading("Achievements"));
-    for (const a of r.achievements) children.push(line(`• ${a}`, { spaceAfter: 60 }));
+    for (const a of r.achievements) {
+      children.push(line(`• ${a}`, { align: AlignmentType.JUSTIFIED, spaceAfter: 20 }));
+    }
   }
 
   // ── Build & save ──
@@ -235,7 +239,8 @@ export async function downloadOptimizedResume(r) {
       {
         properties: {
           page: {
-            margin: { top: 720, bottom: 720, left: 900, right: 900 },
+            size: { width: 11906, height: 16838 },
+            margin: { top: 450, bottom: 450, left: 650, right: 650 },
           },
         },
         children,

@@ -4,9 +4,7 @@ import mammoth from "mammoth";
 import { analyzeWithGPT, optimizeWithGPT } from "../services/gptService.js";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
-/* ============================================================
-   ANALYZE RESUME
-============================================================ */
+
 export const analyzeResume = async (req, res) => {
   try {
     const file = req.file;
@@ -37,9 +35,7 @@ export const analyzeResume = async (req, res) => {
   }
 };
 
-/* ============================================================
-   GENERATE OPTIMIZED RESUME
-============================================================ */
+
 export const generateOptimizedResume = async (req, res) => {
   try {
     const file = req.file;

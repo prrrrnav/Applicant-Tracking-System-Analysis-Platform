@@ -13,10 +13,10 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "file-saver": "^2.0.5",
+    "groq-sdk": "^1.6.0",
     "ioredis": "^5.9.2",
     "mammoth": "^1.9.0",
     "multer": "^1.4.5-lts.2",
-    "openai": "^4.97.0",
     "pdf-parse": "^1.1.1",
     "redis": "^5.10.0"
   },

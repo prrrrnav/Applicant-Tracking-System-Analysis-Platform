@@ -6,6 +6,9 @@ services:
     image: prrrranv/resume-ats-server:latest
     container_name: resume-ats-server
     restart: always
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "5001:5000"
     env_file:

@@ -1,7 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { SESSION_KEY } from "../pages/AuthPage";
 
 export default function Navbar() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem(SESSION_KEY);
+    navigate("/auth?mode=login", { replace: true });
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0A0A0F]/90 backdrop-blur-xl">
@@ -37,12 +44,13 @@ export default function Navbar() {
         </nav>
 
         {/* CTA */}
-        <Link
-          to="/analyze"
+        <button
+          type="button"
+          onClick={logout}
           className="flex h-9 items-center rounded-lg bg-indigo-500 px-5 text-sm font-semibold text-white transition-all hover:bg-indigo-400 active:scale-[0.97]"
         >
-          Get Started
-        </Link>
+          Log out
+        </button>
       </div>
     </header>
   );
