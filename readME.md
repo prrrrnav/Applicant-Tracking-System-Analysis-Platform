@@ -5,6 +5,13 @@
 ![Node.js](https://img.shields.io/badge/Node.js-Express-success?style=for-the-badge&logo=node.js)
 ![Redis](https://img.shields.io/badge/Redis-Caching-red?style=for-the-badge&logo=redis)
 
+## Deploying the frontend
+
+The frontend is deployed to GitHub Pages at https://prrrrnav.github.io/Applicant-Tracking-System-Analysis-Platform/.
+The `Deploy to GitHub Pages` workflow publishes it whenever changes are pushed to `main`.
+Set the repository Actions variable `VITE_API_BASE_URL` to override the default Heroku backend URL.
+GitHub Pages hosts only the frontend; the API must remain available separately.
+
 An intelligent, Dockerized Applicant Tracking System (ATS) simulator and resume analysis tool. This application allows users to upload their resumes (PDF or DOCX) to receive AI-powered summaries, formatting feedback, and actionable insights to improve their job application success rate.
 
 
